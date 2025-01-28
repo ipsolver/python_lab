@@ -173,6 +173,10 @@ class Gardener:
         print("Довідка про яблука:")
         print(tree)
 
+SCORE_COLUMN_INDEX = 4
+TIME_COLUMN_INDEX = 3
+ANSWER_COLUMNS_RANGE = range(5, 25)
+
 #ex 4
 class CsvKmr:
     ref = None
@@ -204,13 +208,13 @@ class Statistic:
             reader = csv.reader(csvfile)
             for line in reader:
                 if line:
-                    thescore = float(line[4].replace(',', '.'))
+                    thescore = float(line[SCORE_COLUMN_INDEX].replace(',', '.'))
                     self.scores.append(thescore)
 
-                    timer = int(line[3].split(' ')[0])
+                    timer = int(line[TIME_COLUMN_INDEX].split(' ')[0])
                     self.time_score.append((timer, thescore))
 
-                    for i in range(5, 25):
+                    for i in ANSWER_COLUMNS_RANGE:
                         score_str = line[i].replace(',', '.')
                         if score_str in ('-', ''):
                             continue
