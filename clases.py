@@ -5,12 +5,28 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 #ex 1
-class Alphabet:
-    lang = 'Ua'
-    letters = ['А', 'Б', 'В', 'Г', 'Ґ', 'Д', 'Е', 'Є', 'Ж', 'З', 'И', 'І', 'Ї', 'Й',
-        'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ю', 'Я']
 
-    def __init__(self, lang=lang, letters=letters):
+class Alphabet:
+    def is_letter(self, text, alphabet):
+        punctuation = string.punctuation
+        k = 0
+        for char in text.upper().strip():
+            if char.isalpha():
+                if char in alphabet:
+                    k += 1
+                else:
+                    return False
+            elif char in punctuation or char.isspace() or char.isdigit():
+                continue
+            else:
+                return False
+        return k > 0
+
+class UaAlphabet(Alphabet):
+    def __init__(self, lang='Ua', letters=None):
+        if letters is None:
+            letters = ['А', 'Б', 'В', 'Г', 'Ґ', 'Д', 'Е', 'Є', 'Ж', 'З', 'И', 'І', 'Ї', 'Й',
+                       'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ю', 'Я']
         self.lang = lang
         self.letters = letters
 
@@ -21,49 +37,16 @@ class Alphabet:
         return len(self.letters)
 
     def is_ua_letter(self, text):
-        ua_letters = self.letters
-        punctuation = string.punctuation
-        k=0
-        for char in text.upper().strip():
-            if char.isalpha():
-                if char in ua_letters:
-                    k+=1
-                else:
-                    return False
-            elif char in punctuation or char.isspace() or char.isdigit():
-                continue
-            else:
-                return False
-        if k>0:
-            return True
-        else:
-            return False
+        return super().is_letter(text, self.letters)
 
-
-class EngAlphabet(Alphabet):
+class EngAlphabet(UaAlphabet):
     __en_letters_num = 26
 
     def __init__(self):
         super().__init__('En', list('ABCDEFGHIJKLMNOPQRSTUVWXYZ'))
 
     def is_en_letter(self, text):
-        en_letters = self.letters
-        punctuation = string.punctuation
-        k = 0
-        for char in text.upper().strip():
-            if char.isalpha():
-                if char in en_letters:
-                    k += 1
-                else:
-                    return False
-            elif char in punctuation or char.isspace() or char.isdigit():
-                continue
-            else:
-                return False
-        if k>0:
-            return True
-        else:
-            return False
+        return super().is_letter(text, self.letters)
 
     def letters_num(self):
         return self.__en_letters_num
@@ -190,6 +173,10 @@ class Gardener:
         print("Довідка про яблука:")
         print(tree)
 
+SCORE_COLUMN_INDEX = 4
+TIME_COLUMN_INDEX = 3
+ANSWER_COLUMNS_RANGE = range(5, 25)
+
 #ex 4
 class CsvKmr:
     ref = None
@@ -221,13 +208,13 @@ class Statistic:
             reader = csv.reader(csvfile)
             for line in reader:
                 if line:
-                    thescore = float(line[4].replace(',', '.'))
+                    thescore = float(line[SCORE_COLUMN_INDEX].replace(',', '.'))
                     self.scores.append(thescore)
 
-                    timer = int(line[3].split(' ')[0])
+                    timer = int(line[TIME_COLUMN_INDEX].split(' ')[0])
                     self.time_score.append((timer, thescore))
 
-                    for i in range(5, 25):
+                    for i in ANSWER_COLUMNS_RANGE:
                         score_str = line[i].replace(',', '.')
                         if score_str in ('-', ''):
                             continue
